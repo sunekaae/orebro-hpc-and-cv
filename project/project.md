@@ -35,11 +35,11 @@ A single pass over this dataset was found to be insufficiently computationally i
 
 The same detection data is reused across all repetitions to ensure identical inputs for both baseline and optimized implementations.
 
-## Time complexity of pairwise IoU computation
+## Time Complexity of Pairwise IoU Computation
 
-* The pairwise IoU computation has O(N²) time complexity - since IoU is computed for all pairs of bounding boxes
+* The pairwise IoU computation has O(N²) time complexity, since IoU is computed for all pairs of bounding boxes
 * This quadratic growth means that the number of operations increases very quickly as the number of bounding boxes increases
-* As a result of this computation can become a dominant performance bottleneck as the number of detections increases (e.g. in an urban setting or on highways)
+* As a result, this computation can become a dominant performance bottleneck as the number of detections increases (e.g. in an urban setting or on highways)
 * The JIT optimization does not change the algorithmic complexity, which is still O(N²), but the cost per operation is significantly reduced and results in substantial overall speedup.
 * For example, increasing the number of bounding boxes from 10 to 20 results in approximately four times as many IoU computations (from 100 to 400).
 
@@ -96,14 +96,16 @@ All experiments are executed in a Google Colab environment using a standard CPU 
 
 Using "!cat /proc/cpuinfo", "virtual_memory()" and "cpu_count()" (see Appendix > Hardware) I gathered:
 * Intel(R) Xeon(R) CPU @ 2.20GHz
-* Number of CPU's: 2
-* RAM: ~1.8 GB used
+* Number of CPUs: 2
+* RAM: ~1.8 GB
 
 (with inspiration from: https://saturncloud.io/blog/whats-the-hardware-spec-for-google-colaboratory/#2)
 
 # Results
 
 The Numba implementation achieves an approximately 88× steady-state speedup and a 2.57× end-to-end speedup when including compilation overhead.
+
+These results demonstrate a substantial reduction in execution time for the optimized implementation under identical workload conditions.
 
 ## Python baseline
 - Python baseline runtime: 4.5865 s (0.5957 ms/img)
