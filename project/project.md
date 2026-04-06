@@ -2,7 +2,7 @@
 
 # Track C: JIT Compilation
 
-## Introduction
+# Introduction
 
 This project investigates the acceleration of a core computation in a computer vision pipeline.
 
@@ -10,15 +10,15 @@ YOLOv8 (Ultralytics implementation) is used to generate object detections on a t
 
 A baseline Python implementation is compared with an optimized version using Numba JIT compilation.
 
-# Benchmark Methodology
 
-## Objective
+# Objective
 
 The goal of the benchmark is to compare the execution time of a pure Python implementation of pairwise Intersection over Union (IoU) computation with an optimized implementation using Numba JIT compilation. This will include an analysis of the performance gains and trade-offs of applying JIT compilation to this workload.
 
 It is important to also ensure correctness of the optimized computation.
 
----
+
+# Workload & Problem Definition
 
 ## Workload Definition
 
@@ -40,7 +40,12 @@ A single pass over this dataset was found to be insufficiently computationally i
 
 The same detection data is reused across all repetitions to ensure identical inputs for both baseline and optimized implementations.
 
----
+## Time complexity of pairwise IoU computation
+
+* The pairwise IoU computation has O(N²) time complexity - since IoU is computed for all pairs of bounding boxes
+* This quadratic growth means that the number of operations increases very quickly as the number of bounding boxes increases
+* As a result, this calculation is more likely to become a performance bottleneck in detection pipelines - especially if many objects are detected (e.g. in an urban setting or on highway)
+* This JIT optimization does not change the algorithmic complexity, which is still O(N²), but the cost per operation is significantly reduced and results in substantial overall speedup.
 
 ## Implementations Compared
 
@@ -52,6 +57,8 @@ Two implementations are evaluated:
 Both implementations compute the same IoU matrix for each image.
 
 ---
+
+# Benchmark Methodology
 
 ## Timing Procedure
 
@@ -79,13 +86,6 @@ The Python implementation does not require warm-up, as it does not involve compi
 
 ---
 
-
-## Hardware Environment
-
-All experiments are executed in a Google Colab environment using a standard CPU configuration.
-
----
-
 ## Metrics Reported
 
 The following metrics are reported:
@@ -97,18 +97,36 @@ The following metrics are reported:
 
 These metrics provide both absolute and normalized views of performance.
 
-## Results
+## Hardware Environment
 
-- Python baseline runtime: 4.5865 s
-- Numba steady-state runtime: 0.0513 s  
+All experiments are executed in a Google Colab environment using a standard CPU configuration.
+
+---
+
+# Results
+
+- Python baseline runtime: 4.5865 s (0.5957 ms/img)
+
+## Steady-state
+- Numba steady-state runtime: 0.0513 s  (0.0068 ms/img)
 - Steady-state speedup: ~88×
+
+![steady-state runtime comparison](supporting-files/total-runtime.png)
+
+![per-image runtime comparison](supporting-files/per-image.png)
+
+## End-to-end
 - Numba first-run time (compile + execute): 1.7363 s
 - End-to-end speedup: 2,57x
+
+![first-run comparison](supporting-files/first-run.png)
 
 ## Limitations
 
 - The dataset is relatively small (160 images), requiring repeated passes to create a sufficiently large workload.  
 - The benchmark focuses on a custom IoU kernel rather than full object detection, so end-to-end performance gains would be smaller.  
+
+---
 
 # Correctness Validation
 
@@ -116,7 +134,9 @@ These metrics provide both absolute and normalized views of performance.
 - Equality is verified using `np.allclose` with a tolerance of `1e-6`  
 - The maximum (worst-case) absolute difference across all outputs was 0.00000024 s and the mean was 0.00000000.
 
-## Discussion
+---
+
+# Discussion
 
 The large speedup (~88x) is primarily due to the difference between Python's interpreted execution and Numba's compiled code. The baseline implementation relies on nested Python loops, which introduce significant interpreter overhead. Numba eliminates this overhead by compiling the computation into efficient native code.
 
@@ -124,7 +144,9 @@ However, this speedup applies only to the IoU computation kernel. If this IoU ca
 
 The workload is scaled through repeated passes over the same dataset. This approach ensures stable timing and a sufficiently large benchmark, but it it worth noting that the image dataset itself is relatively small (160 images).
 
-## Conclusion
+---
+
+# Conclusion
 
 This project demonstrates that JIT compilation using Numba can significantly accelerate a computational kernel in a computer vision pipeline. The IoU computation achieved a steady-state speedup of approximately 88x while maintaining numerical correctness.
 
