@@ -6,7 +6,14 @@
 
 This project investigates the acceleration of a core computation in a computer vision pipeline.
 
-YOLOv8 (Ultralytics implementation) is used to generate object detections on a traffic image dataset, from which bounding boxes are extracted. The focus is on computing pairwise Intersection over Union (IoU) between these boxes; this is a common operation in detection pipelines that is computationally expensive in pure Python due to nested loops.
+YOLOv8 (Ultralytics implementation) is used to generate object detections on a traffic image dataset, from which bounding boxes are extracted.
+
+The focus is on computing pairwise Intersection over Union (IoU) between these boxes; this is a common operation in detection pipelines that is computationally expensive in pure Python due to nested loops.
+
+Figure 1 illustrates the computation of Intersection over Union (IoU) between two bounding boxes, which is the core operation evaluated in this project.
+![IoU figure](supporting-files/iou-figure.png)
+_Figure 1: Intersection over Union (IoU) between two bounding boxes (Author’s illustration, generated with AI assistance)_
+
 
 A baseline Python implementation is compared with an optimized version using Numba JIT compilation.
 
