@@ -150,12 +150,26 @@ The reported speedup applies specifically to the IoU computation kernel. In a fu
 
 The workload is scaled through repeated passes over the same dataset. This approach ensures stable timing and a sufficiently large benchmark, but it is worth noting that the image dataset itself is relatively small (160 images).
 
+## GPU Considerations
+
+Experiments were conducted in a GPU-enabled environment (Google Colab, T4 GPU) to evaluate potential benefits of GPU acceleration.
+
+Two approaches were explored. First, the Numba JIT implementation (`@njit`) was executed in a GPU-enabled runtime. As expected, this yielded no performance improvement, since `@njit` compiles code for CPU execution and does not utilize the GPU.
+
+Second, a simple CUDA-based implementation using `numba.cuda.jit` was developed. This version achieved a total runtime of approximately 3 seconds, which is faster than the pure Python baseline (~4.6 s) but significantly slower than the optimized CPU JIT implementation (~0.05 s).
+
+The lower performance of the CUDA implementation can likely be attributed to overheads associated with GPU execution, including kernel launch costs and data transfer between host and device memory. For the relatively small workload considered in this project, these overheads outweigh the benefits of parallel execution.
+
+These results highlight that GPU acceleration is not universally beneficial, and that CPU-based JIT compilation can already provide substantial performance improvements for some workloads.
+
+Potential future improvements include creating a CUDA implementation to process all IoU computations in a single kernel invocation, or integrating the IoU computation directly into the object detection pipeline to avoid unnecessary data transfers between CPU and GPU.
+
 
 ## Limitations
 
 - The dataset is relatively small (160 images), requiring repeated passes to create a sufficiently large workload.  
 - The benchmark focuses on a custom IoU kernel rather than full object detection, so end-to-end performance gains would be smaller.  
-
+- The project focuses on CPU-based JIT optimization; while GPU acceleration was explored, a fully optimized GPU implementation was not developed
 
 
 # Conclusion
