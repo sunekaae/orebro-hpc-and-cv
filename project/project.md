@@ -164,6 +164,17 @@ These results highlight that GPU acceleration is not universally beneficial, and
 
 Potential future improvements include creating a CUDA implementation to process all IoU computations in a single kernel invocation, or integrating the IoU computation directly into the object detection pipeline to avoid unnecessary data transfers between CPU and GPU.
 
+## Algorithmic Optimization
+
+The current implementation computes the full matrix with all combinations of bounding boxes, resulting in N*N method calls (two nested loops).
+
+The matrix is symmetric, ie. (i,j) and (j,i) are the same, and therefore it would be sufficient to calculate just one half of the matrix and mirror the results.
+
+This would result in approximately a 50% reduction in computations.
+
+However, even though this optimization is substantial it would not change the overall algorithmic complexity of the problem, which is still O(N²), but with a smaller constant factor.
+
+
 
 ## Limitations
 
