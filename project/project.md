@@ -4,6 +4,8 @@
 
 # Introduction
 
+In my job, I contribute to the development of self-driving trucks, specifically within a team providing sensor hardware and software. One essential sensor modality is camera and it is common to compute bounding boxes around objects of interest.
+
 This project investigates the acceleration of a core computation in a computer vision pipeline.
 
 YOLOv8 (Ultralytics implementation) is used to generate object detections on a traffic image dataset, from which bounding boxes are extracted.
