@@ -181,7 +181,7 @@ However, even though this optimization is substantial it would not change the ov
 ## Limitations
 
 - The dataset is relatively small (160 images), requiring repeated passes to create a sufficiently large workload.  
-- The benchmark focuses on a custom IoU kernel rather than full object detection, so end-to-end performance gains would be smaller.  
+- The benchmark focuses on the IoU computation kernel rather than the full object detection pipeline, so end-to-end performance gains would be smaller.  
 - The project focuses on CPU-based JIT optimization; while GPU acceleration was explored, a fully optimized GPU implementation was not developed
 
 
