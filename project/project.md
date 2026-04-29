@@ -154,7 +154,7 @@ The workload is scaled through repeated passes over the same dataset. This appro
 
 ## GPU Considerations
 
-Experiments were conducted in a GPU-enabled environment (Google Colab, T4 GPU) to evaluate potential benefits of GPU acceleration.
+Additional experiments were conducted in a GPU-enabled environment (Google Colab, T4 GPU) to evaluate potential benefits of GPU acceleration.
 
 Two approaches were explored. First, the Numba JIT implementation (`@njit`) was executed in a GPU-enabled runtime. As expected, this yielded no performance improvement, since `@njit` compiles code for CPU execution and does not utilize the GPU.
 
